@@ -9,7 +9,7 @@ interface UserProps {
     email: string;
     name: string;
     updatedAt: string;
-    _id: string;
+    id: string;
     password: string;
     confirmpassword: string;
 }
@@ -21,7 +21,7 @@ const Profile = () => {
         email: '',
         name: '',
         updatedAt: '',
-        _id: '',
+        id: '',
         password: '',
         confirmpassword: ''
     });
@@ -93,7 +93,7 @@ const Profile = () => {
 
         formData.append('user', JSON.stringify(user));
 
-        const url = `/users/edit/${user._id}`;
+        const url = `/users/edit/${user.id}`;
 
         const data = await api
             .patch(url, formData, {

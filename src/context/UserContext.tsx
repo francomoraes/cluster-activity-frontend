@@ -16,10 +16,11 @@ export default function UserProvider({
 }: {
     children: React.ReactNode;
 }) {
-    const { register, login, authenticated, logout } = useAuth();
+    const { register, login, authenticated, setAuthenticated, logout } =
+        useAuth();
     return (
         <UserContext.Provider
-            value={{ register, login, authenticated, logout }}
+            value={{ register, login, authenticated, setAuthenticated, logout }}
         >
             {children}
         </UserContext.Provider>

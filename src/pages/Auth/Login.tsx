@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Input from '../../components/form/Input';
 import { useUserContext } from '@/context/UserContext';
+import { Button } from '@material-tailwind/react';
+import api from '@/utils/api';
 
 interface UserLogin {
     email: string;
@@ -12,7 +14,7 @@ const Login: React.FC = () => {
         email: '',
         password: ''
     });
-    const { login } = useUserContext() as any;
+    const { login, setAuthenticated } = useUserContext() as any;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setLoginDetails({ ...loginDetails, [e.target.name]: e.target.value });
@@ -22,6 +24,36 @@ const Login: React.FC = () => {
         e.preventDefault();
         login(loginDetails);
     };
+
+    const navigate = (url: string) => {
+        window.location.href = url;
+    };
+
+    async function googleAuth() {
+        const response = await fetch(
+            `${import.meta.env.VITE_APP_API}/request`,
+            {
+                method: 'post'
+            }
+        );
+        const data = await response.json();
+        navigate(data.url);
+    }
+
+    async function handleGoogleResonse() {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+        if (!token) return;
+
+        localStorage.setItem('token', JSON.stringify(token));
+        api.defaults.headers.Authorization = `Bearer ${token}`;
+        setAuthenticated(true);
+        navigate('/');
+    }
+
+    useEffect(() => {
+        handleGoogleResonse();
+    }, []);
 
     return (
         <div className="max-w-md mx-auto my-10 bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
@@ -47,6 +79,10 @@ const Login: React.FC = () => {
                     Login
                 </button>
             </form>
+            <h3>Google OAuth!</h3>
+            <Button type="button" onClick={() => googleAuth()}>
+                Google Sign In
+            </Button>
         </div>
     );
 };
